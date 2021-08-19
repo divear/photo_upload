@@ -6,3 +6,6 @@ body{
   background-color: var(--bg);
   color: var(--wh);
 }
+.photo{
+  width: 50%;
+}
