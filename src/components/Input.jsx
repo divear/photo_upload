@@ -5,6 +5,7 @@ import Editor from './Editor';
 function Input() {
     const [photo, setPhoto] = useState("")
     const [photoUrl , setPhotoUrl] = useState("")
+    const [error, setError] = useState("")
 
     function handleChange(e){
         if(e.target.files[0]){
@@ -12,6 +13,11 @@ function Input() {
         }
     }
     function handleSubmit(){
+        if(!photo){
+            setError("No photo provided.")
+            return;
+        }
+        setError("")
         const uploadTask = storage.ref(`images/${photo.name}`).put(photo)
         uploadTask.on(
             "state changed",
@@ -37,8 +43,13 @@ function Input() {
     return (
         <div>
             <h1>Photo editor</h1>
-            <input className="photoInput" onChange={(e) =>handleChange(e)} type="file" />
+            <input
+             accept="image/png, image/gif, image/jpeg" className="photoInput"
+              onChange={(e) =>handleChange(e)} type="file" />
+
             <button onClick={handleSubmit} type="submit">Confirm</button>
+            <h1 className={error ? "error" : "no"}>{error}</h1>
+            
             <Editor photoUrl={photoUrl}/>
         </div>
     )
