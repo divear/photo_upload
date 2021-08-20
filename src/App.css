@@ -1,11 +1,20 @@
 :root{
-  --bg: rgb(28, 66, 63);
+  --bg: #1c423f;
   --wh: rgb(227, 255, 247);
+  --sc: #1c1f42;
 }
 body{
   background-color: var(--bg);
   color: var(--wh);
 }
 .photo{
-  width: 50%;
+  border: 0.1vw solid black;
+  margin: 2vw;
+}
+button{
+  background-color: var(--sc);
+  color: var(--wh);
+  border: 0.1vw solid black;
+  font-size: 2vw;
+  cursor: pointer;
 }

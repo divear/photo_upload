@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { storage } from '../firebase';
+import Editor from './Editor';
 
 function Input() {
     const [photo, setPhoto] = useState("")
-    const [photUrl , setPhotoUrl] = useState("")
+    const [photoUrl , setPhotoUrl] = useState("")
 
     function handleChange(e){
         if(e.target.files[0]){
@@ -26,6 +27,7 @@ function Input() {
                     .then(url =>{
                         setPhotoUrl(url)
                         console.log(url);
+                        localStorage.setItem("url", url)
                     })
             }
         )
@@ -34,11 +36,10 @@ function Input() {
 
     return (
         <div>
-            
-            <input onChange={(e) =>handleChange(e)} type="file" />
-            <button onClick={handleSubmit} type="submit">send</button>
-        
-            <img className="photo" src={photUrl} alt="file not chosen" />
+            <h1>Photo editor</h1>
+            <input className="photoInput" onChange={(e) =>handleChange(e)} type="file" />
+            <button onClick={handleSubmit} type="submit">Confirm</button>
+            <Editor photoUrl={photoUrl}/>
         </div>
     )
 }
