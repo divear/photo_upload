@@ -7,6 +7,9 @@ body{
   background-color: var(--bg);
   color: var(--wh);
 }
+*::selection{
+  mix-blend-mode: difference;
+}
 .photo{
   border: 0.1vw solid black;
   margin: 2vw;
@@ -26,4 +29,22 @@ button{
 }
 .no{
   display: none;
+}
+.download{
+  float: right;
+  margin: 0.1vw;
+}
+#canvas{
+  background-color: rgb(255, 255, 255);
+  border: 0.1vw rgb(255, 255, 255) solid;
+}
+svg{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+.clear{
+  float: right;
+  background-color: var(--bg);
 }
