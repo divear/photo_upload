@@ -1,18 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 
-function Editor(photoUrl) {
+function Editor() {
     const [cw, setcw] = useState(1250)
     const [ch, setch] = useState(500)
     const [lineWidth, setLineWidth] = useState(3)
     const [atag, setAtag] = useState("")
     const [clickable, setClickable] = useState(false)
+    const [isS, setIsS] = useState(false)
+    const [isShapes, setIsShapes] = useState(false)
+
+
+    const [write, setWrite] = useState(false)
+    const [message, setMessage] = useState("")
+    const [shape, setShape] = useState("fillRect")
     
-    const url = photoUrl.photoUrl || localStorage.getItem("url")
 
     const canvasRef = useRef(null);
     const [context, setContext] = useState(null);
-    const [color, setColor] = useState("black")
+    const [color, setColor] = useState("#000000")
+    const [sec, setSec] = useState("#000000")
 
     if(cw > 1300){
       setcw(1300)
@@ -40,6 +47,31 @@ function Editor(photoUrl) {
           x: evt.clientX - canvasOffsetLeft,
           y: evt.clientY - canvasOffsetTop,
         };
+
+        if(isShapes){
+          console.log(shape);
+          if(shape === "fillRect"){
+            context.fillStyle = color
+            context.fillRect(start.x-lineWidth*2,start.y-lineWidth*2,lineWidth*4, lineWidth*4)
+          }else if(shape === "arc"){
+            context.beginPath()
+            context.arc(start.x,start.y,lineWidth*2,0,2*Math.PI)
+            context.closePath()
+            context.fill()
+          }
+          return
+        }
+
+        if(write){
+          context.fillStyle = color
+          context.strokeStyle = sec
+          context.font = `${lineWidth/2}rem Arial`;
+
+          if(isS){
+            context.strokeText(message,start.x,start.y);
+          }
+          context.fillText(message,start.x,start.y);
+        }
       }
   
       function handleMouseUp(evt) {
@@ -47,7 +79,7 @@ function Editor(photoUrl) {
       }
   
       function handleMouseMove(evt) {
-        if (mouseDown && context) {
+        if (mouseDown && context && !write && !isShapes) {
           start = {
             x: end.x,
             y: end.y,
@@ -57,9 +89,18 @@ function Editor(photoUrl) {
             x: evt.clientX - canvasOffsetLeft,
             y: evt.clientY - canvasOffsetTop,
           };
+
+
+          if(isS){
+            context.beginPath();
+            context.moveTo(start.x, start.y);
+            context.lineTo(end.x, end.y);
+            context.strokeStyle = sec;
+            context.lineWidth = lineWidth * 2;
+            context.stroke();
+          }
   
           // Draw our path
-          context.beginPath();
           context.lineCap = "round";
           context.moveTo(start.x, start.y);
           context.lineTo(end.x, end.y);
@@ -88,18 +129,7 @@ function Editor(photoUrl) {
         }
       }
   
-      //draw image
-      if (context) {
-        const image = new Image();
-        image.src = url;
-        image.crossOrigin = "anonymous"
-        image.useCORS = true
-        image.onload = () => {
-          if(lineWidth === 3 && color === "black"){
-            context.drawImage(image, 0, 0);
-          }
-        }
-      }
+
   
       return function cleanup() {
         if (canvasRef.current) {
@@ -108,7 +138,7 @@ function Editor(photoUrl) {
           canvasRef.current.removeEventListener('mousemove', handleMouseMove);
         }
       }
-    }, [context, color, lineWidth]);
+    }, [context, color, lineWidth, write, message, sec, isS, shape, isShapes]);
 
     function downloadCanvas(){
       const dataURI = canvasRef.current.toDataURL()
@@ -130,14 +160,17 @@ function Editor(photoUrl) {
     function clearCanvas(){
       context.clearRect(0, 0, cw, ch)
     }
+    function fillFull(){
+      context.fillStyle = color;
+      context.fillRect(0, 0, cw, ch)
+    }
 
     return (
         <div>
-           
 
             <input onChange={(e)=>setcw(e.target.value)} min="50" max="1300" value={cw} type="number" placeholder="width"/>
             <input onChange={(e)=>setch(e.target.value)} min="50" max="500" value={ch} type="number" placeholder="heigth" />
-            <button className="clear" onClick={clearCanvas}>clear</button>
+            <button draggable={false} className="clear" onClick={clearCanvas}>clear</button>
 
             <canvas
                 id="canvas"
@@ -148,11 +181,25 @@ function Editor(photoUrl) {
             <input min="1" id="range" onChange={e => setLineWidth(e.target.value)} value={lineWidth} type="range" />
             <label htmlFor="range">{lineWidth}</label>
             <input type="color" onChange={(e)=>setColor(e.target.value)} value={color} />
+            <input className={isS ? "" : "no"} type="color" onChange={(e)=>setSec(e.target.value)} value={sec} />
+
+            <button onClick={fillFull}>fill</button>
+            <button className={write ? "textB" : ""} onClick={()=>setWrite(!write)}>add text</button>
+            <input className={write ? "" : "no"} onChange={(e)=>setMessage(e.target.value)} value={message} type="text" />
+            <button className={isS ? "textB" : ""} onClick={()=>setIsS(!isS)}>secondary</button>
+            <button className={isShapes ? "textB" : ""} onClick={()=>{setIsShapes(!isShapes)}}>shapes</button>
+            <div className={isShapes ? "" : "no"}>
+              <select value={shape} onChange={(e)=>setShape(e.target.value)} name="shape" id="shape">
+                <option value="fillRect">rectangle</option>
+                <option value="arc">circle</option>
+                <option value="lineTo">polygon</option>
+              </select>
+            </div>
 
             <button className="download" onClick={downloadCanvas}>download</button>
-            <a ref={click} className="no" download="your_edited_photo.png" href={atag}><h1>.</h1></a>
+            <a ref={click} className="no" download="your_edited_photo.png" href={atag}>.</a>
         </div>
     )
 }
 
-export default Editor
+export default Editor;

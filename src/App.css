@@ -8,7 +8,8 @@ body{
   color: var(--wh);
 }
 *::selection{
-  mix-blend-mode: difference;
+  background-color: var(--bg);
+  color: var(--wh);
 }
 .photo{
   border: 0.1vw solid black;
@@ -47,4 +48,12 @@ svg{
 .clear{
   float: right;
   background-color: var(--bg);
+}
+.textB{
+  background-color: var(--bg);
+}
+#shape{
+  margin: 0;
+  padding: 0;
+  position: absolute;
 }
