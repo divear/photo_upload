@@ -57,3 +57,7 @@ svg{
   padding: 0;
   position: absolute;
 }
+.connect{
+  position: absolute;
+  margin: 0 0 0 8vw;
+}
