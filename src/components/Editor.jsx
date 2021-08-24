@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
+import {storage} from "../firebase"
+import firebase from 'firebase'
 
 
 function Editor() {
@@ -9,6 +11,7 @@ function Editor() {
     const [clickable, setClickable] = useState(false)
     const [isS, setIsS] = useState(false)
     const [isShapes, setIsShapes] = useState(false)
+    const [lineCap, setLineCap] = useState("round")
 
     const [write, setWrite] = useState(false)
     const [message, setMessage] = useState("")
@@ -71,7 +74,7 @@ function Editor() {
 
           }else if(shape === "lineTo"){
             c.beginPath()
-            c.lineCap = "round";
+            c.lineCap = lineCap;
             c.moveTo(start.x, start.y);
             if(second.x){
               if(isS){
@@ -136,7 +139,8 @@ function Editor() {
           }
   
           // Draw our path
-          c.lineCap = "round";
+          console.log(lineCap);
+          c.lineCap = lineCap;
           c.moveTo(start.x, start.y);
           c.lineTo(end.x, end.y);
           c.strokeStyle = color;
@@ -173,7 +177,7 @@ function Editor() {
           canvasRef.current.removeEventListener('mousemove', handleMouseMove);
         }
       }
-    }, [c, color, lineWidth, write, message, sec, isS, shape, isShapes]);
+    }, [c, color, lineWidth, write, message, sec, isS, shape, isShapes, lineCap]);
 
     function downloadCanvas(){
       const dataURI = canvasRef.current.toDataURL()
@@ -200,6 +204,20 @@ function Editor() {
       c.fillRect(0, 0, cw, ch)
     }
 
+    function send(){
+      var dataURL = canvasRef.current.toDataURL().replace("data:image/png;base64,","")
+      const uploadTask = firebase.storage()
+      .ref('/images')
+      .child(uuidv4())
+      .putString(dataURL, 'base64', {contentType:'image/jpg'});
+    }
+
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r && 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
   
     return (
         <div>
@@ -230,9 +248,14 @@ function Editor() {
                 <option value="arc">circle</option>
                 <option value="lineTo">polygon</option>
               </select>
-              
             </div>
+            <select value={lineCap} onChange={(e)=>setLineCap(e.target.value)} name="lineCap" id="lineCap">      
+                <option value="round">round</option>
+                <option value="butt">none</option>
+                <option value="square">square</option>
+            </select>
 
+            <button onClick={send}>send</button>
             <button className="download" onClick={downloadCanvas}>download</button>
             <a ref={click} className="no" download="your_edited_photo.png" href={atag}>.</a>
         </div>
