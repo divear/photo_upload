@@ -21,7 +21,6 @@ function Home() {
         imageRef.getDownloadURL().then(function(url) {
             data.push(url)
             setData(data)
-            // console.log(data);
             
         }).catch(function(error) {
           console.log(error);
@@ -34,14 +33,17 @@ function Home() {
         });
       }
 
+      if(!data[1] && pl){
+          setData(localStorage.getItem("data").split(","));
+      }
    
     return (
         <div>
             <a className="newDrawing" href="/editor">Draw a new drawing</a>
             <div className="posts">
                 {
-                    data.length === pl && data.map(d =>{
-                        console.log(d);
+                    data[0] && data.map(d =>{
+                        localStorage.setItem("data", data)
                         return(
                             <div key={uuidv4()}>
                                 <img className="img" src={d} alt="img" />
