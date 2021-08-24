@@ -1,14 +1,15 @@
 :root{
   --bg: #1c423f;
-  --wh: rgb(227, 255, 247);
+  --wh: #e3fff7;
   --sc: #1c1f42;
+  --mid: #6aa197;
 }
 body{
   background-color: var(--bg);
   color: var(--wh);
 }
 *::selection{
-  background-color: var(--bg);
+  background-color: var(--mid);
   color: var(--wh);
 }
 .photo{
@@ -60,4 +61,23 @@ svg{
 .connect{
   position: absolute;
   margin: 0 0 0 8vw;
+}
+a{
+  color: var(--mid)  ;
+}
+.newDrawing{
+  float: right;
+  font-size: 2vw;
+  position: absolute;
+  top: 1%;
+  right: 1%;
+}
+.posts{
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+.img{
+  width: 80%;
+  background-color: white;
+  border: 0.1vw solid black;
 }

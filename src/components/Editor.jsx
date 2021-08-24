@@ -207,9 +207,10 @@ function Editor() {
     function send(){
       var dataURL = canvasRef.current.toDataURL().replace("data:image/png;base64,","")
       const uploadTask = firebase.storage()
-      .ref('/images')
+      .ref('/imgs')
       .child(uuidv4())
       .putString(dataURL, 'base64', {contentType:'image/jpg'});
+      window.location = "/"
     }
 
     function uuidv4() {
@@ -225,6 +226,7 @@ function Editor() {
             <input onChange={(e)=>setcw(e.target.value)} min="50" max="1300" value={cw} type="number" placeholder="width"/>
             <input onChange={(e)=>setch(e.target.value)} min="50" max="500" value={ch} type="number" placeholder="heigth" />
             <button draggable={false} className="clear" onClick={clearCanvas}>clear</button>
+            <a className="download" href="/">leave without saving</a>
 
             <canvas
                 id="canvas"
@@ -255,7 +257,7 @@ function Editor() {
                 <option value="square">square</option>
             </select>
 
-            <button onClick={send}>send</button>
+            <button className="download" onClick={send}>send</button>
             <button className="download" onClick={downloadCanvas}>download</button>
             <a ref={click} className="no" download="your_edited_photo.png" href={atag}>.</a>
         </div>
